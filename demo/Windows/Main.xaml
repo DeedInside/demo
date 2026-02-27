@@ -18,11 +18,22 @@
                 
             </StackPanel>
         </DockPanel>
-        <StackPanel DockPanel.Dock="Bottom">
-            
+        <StackPanel Name="PanelBottomButton" Orientation="Horizontal" DockPanel.Dock="Bottom">
+            <StackPanel Name="PanelBottomAdmin" Orientation="Horizontal">
+                <Button Content="Добавить" Width="80" Margin="5" Click="Button_add_product"/>
+                <Button Content="Удалить" Width="80" Margin="5" Click="Buutton_delite_product"/>
+            </StackPanel>
+            <Button Name="PanelRequestBottom" Content="Заявки" Width="80" Margin="5" Click="Button_request"/>
         </StackPanel>
         <StackPanel>
-            
+            <StackPanel Orientation="Horizontal" Margin="5" Name="PanelFind">
+                <TextBox Width="100" Name="BoxFind"/>
+                <TextBlock Text="Поиск" Margin=" 5 0 5 0"/>
+                <ComboBox Name="ComboBoxItem" SelectedIndex="0" Width="100" SelectionChanged="Selection_filter"/>
+                <RadioButton Content="по возрастанию" Checked="Checker_sort_product" Margin="5 0 5 0"/>
+                <RadioButton Content="по убыванию" Checked="Checker_sort_product"/>
+            </StackPanel>
+            <ListBox Name="BoxProduct" SelectionChanged="Selection_product"/>
         </StackPanel>
     </DockPanel>
 </Window>

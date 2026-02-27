@@ -1,0 +1,25 @@
+﻿<Window x:Class="demo.Windows.RequestWin.RequestWindows"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:demo.Windows.RequestWin"
+        WindowStartupLocation="CenterScreen"
+        mc:Ignorable="d"
+        Title="Заявки" Height="450" Width="800">
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Top" Margin="5">
+            <Button Content=" Назад " Click="Button_exit" DockPanel.Dock="Left"/>
+            <StackPanel>
+
+            </StackPanel>
+        </DockPanel>
+        <StackPanel Name="PanelBottomButton" Orientation="Horizontal" DockPanel.Dock="Bottom">
+            <Button Content="Добавить" Width="80" Margin="5" Click="Button_add_reques"/>
+            <Button Content="Удалить" Width="80" Margin="5" Click="Buutton_delite_reques"/>
+        </StackPanel>
+        <StackPanel>
+            <ListBox Name="BoxProduct" SelectionChanged="Selection_request"/>
+        </StackPanel>
+    </DockPanel>
+</Window>
