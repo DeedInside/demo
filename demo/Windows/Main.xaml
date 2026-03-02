@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:demo.Windows"
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d"
-        Title="Приложение" Height="450" Width="800">
+        Title="Приложение" Height="850" Width="1300">
     <DockPanel>
         <DockPanel DockPanel.Dock="Top" Margin="5">
             <Button Content=" Выход " Click="Button_exit_user" DockPanel.Dock="Left"/>
@@ -33,7 +33,7 @@
                 <RadioButton Content="по возрастанию" Checked="Checker_sort_product" Margin="5 0 5 0"/>
                 <RadioButton Content="по убыванию" Checked="Checker_sort_product"/>
             </StackPanel>
-            <ListBox Name="BoxProduct" SelectionChanged="Selection_product"/>
+            <ListBox Name="BoxProduct" Width="1240" Height="730"/>
         </StackPanel>
     </DockPanel>
 </Window>

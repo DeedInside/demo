@@ -1,31 +1,62 @@
-﻿using demo.Models;
-using demo.Windows.Product;
+﻿using demo.Data;
+using demo.Models;
+using demo.UserControllers;
+using demo.Windows.Products;
 using demo.Windows.RequestWin;
+using Microsoft.EntityFrameworkCore;
 using System.Windows;
 
 namespace demo.Windows
 {
     public partial class Main : Window
     {
+        private DemoContext context;
         public Main()
         {
             InitializeComponent();
+            context = new DemoContext();
             BoxUserName.Text = "гость";
             PanelFind.Visibility = Visibility.Collapsed;
             PanelBottomButton.Visibility = Visibility.Collapsed;
+            DrawProductItem();
         }
         public Main(User user)
         {
             InitializeComponent();
-            BoxUserName.Text = user.Login;
+            context = new DemoContext();
 
-            if(user.Role.Name == "админ")
+            BoxUserName.Text = user.FullName;
+            DrawProductItem();
+
+            if (user.RoleNavigation.Role1 == "Администратор")
             {
-                BoxProduct.SelectionChanged += Selection_product;
+                BoxProduct.MouseDoubleClick += BoxProduct_MouseDoubleClick;
             }
             else
             {
                 PanelBottomAdmin.Visibility = Visibility.Collapsed;
+            }
+        }
+        private void DrawProductItem()
+        {
+            BoxProduct.Items.Clear();
+
+            var prod = context.Products
+                .Include(p => p.Name)
+                .Include(p => p.Category)
+                .Include(p => p.Manufacturer)
+                .Include(p => p.OrderArticles)
+                .Include(p => p.Supplier)
+                .ToList();
+
+            foreach (var item in prod)
+            {
+                if (item != null)
+                {
+                    ItemProduct xml = new ItemProduct(item);
+
+                    BoxProduct.Items.Add(xml);
+                }
             }
         }
 
@@ -36,7 +67,7 @@ namespace demo.Windows
             this.Close();
         }
 
-        private void Selection_product(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void BoxProduct_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             EditProduct edit = new EditProduct();
 

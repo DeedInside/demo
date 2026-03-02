@@ -1,10 +1,10 @@
 ﻿using System.Windows;
 
-namespace demo.Windows.RequestWin
+namespace demo.Windows.Products
 {
-    public partial class EditProduct : Window
+    public partial class AddProduct : Window
     {
-        public EditProduct()
+        public AddProduct()
         {
             InitializeComponent();
         }
@@ -14,7 +14,7 @@ namespace demo.Windows.RequestWin
             DialogResult = false;
         }
 
-        private void Button_save(object sender, RoutedEventArgs e)
+        private void Button_add(object sender, RoutedEventArgs e)
         {
 
         }

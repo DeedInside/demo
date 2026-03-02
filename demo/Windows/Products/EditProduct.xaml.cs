@@ -1,10 +1,10 @@
 ﻿using System.Windows;
 
-namespace demo.Windows.Product
+namespace demo.Windows.Products
 {
-    public partial class AddProduct : Window
+    public partial class EditProduct : Window
     {
-        public AddProduct()
+        public EditProduct()
         {
             InitializeComponent();
         }
@@ -14,7 +14,7 @@ namespace demo.Windows.Product
             DialogResult = false;
         }
 
-        private void Button_add(object sender, RoutedEventArgs e)
+        private void Button_save(object sender, RoutedEventArgs e)
         {
 
         }

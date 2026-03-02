@@ -1,8 +1,10 @@
-﻿namespace demo.Models
+﻿namespace demo.Models;
+
+public partial class Role
 {
-    public class Role
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-    }
+    public int Id { get; set; }
+
+    public string? Role1 { get; set; }
+
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

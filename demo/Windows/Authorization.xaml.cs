@@ -1,16 +1,17 @@
 ﻿using demo.Data;
 using demo.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Windows;
 
 namespace demo.Windows
 {
     public partial class Authorization : Window
     {
-        private ApplicationContext context;
+        private DemoContext context;
         public Authorization()
         {
             InitializeComponent();
-            context = new ApplicationContext();
+            context = new DemoContext();
         }
 
         private void Button_authorization(object sender, RoutedEventArgs e)
@@ -18,6 +19,7 @@ namespace demo.Windows
             if(!string.IsNullOrWhiteSpace(BoxLogin.Text) && !string.IsNullOrWhiteSpace(BoxPassword.Text))
             {
                 User user = context.Users.FirstOrDefault(q => q.Login == BoxLogin.Text && q.Password == BoxPassword.Text);
+                user.RoleNavigation = context.Roles.FirstOrDefault(q => q.Id == user.Role);
                 if (user != null)
                 {
                     Main main = new Main(user);
