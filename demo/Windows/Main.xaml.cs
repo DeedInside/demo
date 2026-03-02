@@ -19,7 +19,7 @@ namespace demo.Windows
             InitializeComponent();
             BoxUserName.Text = user.Login;
 
-            if(user.Role.Name == "админ")
+            if(user.Role.Value == "админ")
             {
                 BoxProduct.SelectionChanged += Selection_product;
             }

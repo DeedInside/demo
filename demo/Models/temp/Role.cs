@@ -1,4 +1,4 @@
-﻿namespace demo.Models
+﻿namespace demo.Models.temp
 {
     public class Role
     {
