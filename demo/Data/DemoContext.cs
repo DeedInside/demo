@@ -7,6 +7,7 @@ public partial class DemoContext : DbContext
 {
     public DemoContext()
     {
+        
     }
 
     public DemoContext(DbContextOptions<DemoContext> options)

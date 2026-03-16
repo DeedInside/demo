@@ -4,6 +4,7 @@ using demo.UserControllers;
 using demo.Windows.Products;
 using demo.Windows.RequestWin;
 using Microsoft.EntityFrameworkCore;
+using System.Transactions;
 using System.Windows;
 
 namespace demo.Windows
@@ -11,6 +12,7 @@ namespace demo.Windows
     public partial class Main : Window
     {
         private DemoContext context;
+        private User currentUser;
         public Main()
         {
             InitializeComponent();
@@ -26,6 +28,7 @@ namespace demo.Windows
             context = new DemoContext();
 
             BoxUserName.Text = user.FullName;
+            currentUser = user;
             DrawProductItem();
 
             if (user.RoleNavigation.Role1 == "Администратор")
@@ -88,7 +91,7 @@ namespace demo.Windows
 
         private void Button_request(object sender, RoutedEventArgs e)
         {
-            RequestWindows request = new RequestWindows();
+            RequestWindows request = new RequestWindows(currentUser);
             if (request.ShowDialog() == true)
             {
 

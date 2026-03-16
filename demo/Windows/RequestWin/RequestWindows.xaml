@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:demo.Windows.RequestWin"
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d"
-        Title="Заявки" Height="450" Width="800">
+        Title="Заявки" Height="600" Width="830">
     <DockPanel>
         <DockPanel DockPanel.Dock="Top" Margin="5">
             <Button Content=" Назад " Click="Button_exit" DockPanel.Dock="Left"/>
@@ -19,7 +19,35 @@
             <Button Content="Удалить" Width="80" Margin="5" Click="Buutton_delite_reques"/>
         </StackPanel>
         <StackPanel>
-            <ListBox Name="BoxProduct" SelectionChanged="Selection_request"/>
+            <ListBox Name="BoxOrder"
+                     Height="500">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel Height="100">
+                            <Border DockPanel.Dock="Right"
+                                    BorderBrush="Black"
+                                    BorderThickness="1"
+                                    Margin="5"
+                                    MinWidth="120">
+                                <TextBlock Text="{Binding DeliveryDate, StringFormat='dd.MM.yyyy'}"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"/>
+                            </Border>
+                            <Border BorderBrush="Black"
+                                    BorderThickness="1"
+                                    Margin="5"
+                                    Width="640">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Code}" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Status.Status1}"/>
+                                    <TextBlock Text="{Binding PickupPoint.Adress}" />
+                                    <TextBlock Text="{Binding OrderDate, StringFormat='dd.MM.yyyy'}"/>
+                                </StackPanel>
+                            </Border>
+                        </DockPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </StackPanel>
     </DockPanel>
 </Window>

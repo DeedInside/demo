@@ -1,23 +1,44 @@
-﻿using System.Windows;
+﻿using demo.Data;
+using demo.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace demo.Windows.RequestWin
 {
     public partial class RequestWindows : Window
     {
-        public RequestWindows()
+        private DemoContext Context;
+        public RequestWindows(User user)
         {
             InitializeComponent();
+            Context = new DemoContext();
+
+            List<Order> orders = Context.Orders
+                .Include(q => q.PickupPoint)
+                .Include(q => q.Status)
+                .ToList();
+            BoxOrder.ItemsSource = Context.Orders.ToList();
+
+            if (user.RoleNavigation.Role1 == "Администратор")
+            {
+                BoxOrder.MouseDoubleClick += BoxProduct_MouseDoubleClick; ;
+                PanelBottomButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                PanelBottomButton.Visibility= Visibility.Collapsed;
+            }
         }
 
-        private void Selection_request(object sender, SelectionChangedEventArgs e)
+        private void BoxProduct_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            
-            if(true)
+            Order order = BoxOrder.SelectedItem as Order;
+            if (order != null)
             {
-                EditRequest edit = new EditRequest();
-                
-                if(edit.ShowDialog() == true)
+                EditRequest edit = new EditRequest(order);
+
+                if (edit.ShowDialog() == true)
                 {
 
                 }
