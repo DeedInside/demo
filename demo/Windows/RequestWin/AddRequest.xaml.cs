@@ -23,8 +23,11 @@ namespace demo.Windows.RequestWin
             {
                 try
                 {
+                    //тут идёт присвоение id как как в таблице я забыл установить автоикремент для поля ID,
+                    //поэтому я делаю это руками (так делать не надо)
                     Order order = new Order()
                     {
+                        Id = context.Orders.Max(q => q.Id) + 1,//Так делать если автоикремент в бд не сделан
                         OrderDate = DateTime.Parse(BoxDateOrder.Text),
                         DeliveryDate = DateTime.Parse(BoxDateDelivery.Text),
                         Code = double.Parse(BoxArc.Text),
@@ -33,6 +36,7 @@ namespace demo.Windows.RequestWin
                     };
                     context.Orders.Add(order);
                     context.SaveChanges();
+                    DialogResult = true;
                 }
                 catch(Exception ex)
                 {

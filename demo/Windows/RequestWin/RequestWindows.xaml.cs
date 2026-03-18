@@ -1,6 +1,8 @@
 ﻿using demo.Data;
 using demo.Models;
+using demo.UserControllers;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -56,7 +58,24 @@ namespace demo.Windows.RequestWin
 
         private void Buutton_delite_reques(object sender, RoutedEventArgs e)
         {
+            Order prod = BoxOrder.SelectedItem as Order;
+            if (prod != null)
+            {
+                var order = Context.OrderArticles.FirstOrDefault(q => q.ProductId == prod.Id) ?? null;
 
+                var ordersArticles = Context.OrderArticles.FirstOrDefault(q=> q.Order == prod);
+                if (ordersArticles != null)
+                {
+                    Context.OrderArticles.Remove(ordersArticles);
+                }
+                Context.Orders.Remove(prod);
+                Context.SaveChanges();
+                BoxOrder.ItemsSource = Context.Orders.ToList();
+            }
+            else
+            {
+                MessageBox.Show("Выберете заказ для удаления");
+            }
         }
 
         private void Button_exit(object sender, RoutedEventArgs e)

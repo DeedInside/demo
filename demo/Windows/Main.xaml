@@ -27,11 +27,14 @@
         </StackPanel>
         <StackPanel>
             <StackPanel Orientation="Horizontal" Margin="5" Name="PanelFind">
-                <TextBox Width="100" Name="BoxFind"/>
+                <TextBox Width="100" Name="BoxFind" TextChanged="BoxFind_TextChanged"/>
                 <TextBlock Text="Поиск" Margin=" 5 0 5 0"/>
-                <ComboBox Name="ComboBoxItem" SelectedIndex="0" Width="100" SelectionChanged="Selection_filter"/>
-                <RadioButton Content="по возрастанию" Checked="Checker_sort_product" Margin="5 0 5 0"/>
-                <RadioButton Content="по убыванию" Checked="Checker_sort_product"/>
+                <ComboBox Name="ComboBoxItem" SelectedIndex="0" Width="100" SelectionChanged="ComboSuppliers_SelectionChanged"/>
+                <RadioButton Content="по возрастанию" Margin="5 0 5 0"
+                             Checked="RadioUpp_Checked"
+                             IsChecked="True"/>
+                <RadioButton Content="по убыванию"
+                             Checked="RadioUpp_Checked"/>
             </StackPanel>
             <ListBox Name="BoxProduct" Width="1240" Height="730"/>
         </StackPanel>

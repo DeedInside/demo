@@ -4,8 +4,11 @@ using demo.UserControllers;
 using demo.Windows.Products;
 using demo.Windows.RequestWin;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
+using System.Reflection;
 using System.Transactions;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace demo.Windows
 {
@@ -13,23 +16,31 @@ namespace demo.Windows
     {
         private DemoContext context;
         private User currentUser;
+        private List<Product> products;
+        private readonly string projPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+
+        private string SortParam = "по возрастанию";
+        private string FiltParam = "все поставщики";
+
         public Main()
         {
-            InitializeComponent();
             context = new DemoContext();
+            InitializeComponent();
             BoxUserName.Text = "гость";
             PanelFind.Visibility = Visibility.Collapsed;
             PanelBottomButton.Visibility = Visibility.Collapsed;
-            DrawProductItem();
+            DrawProductItem(products);
         }
         public Main(User user)
         {
-            InitializeComponent();
             context = new DemoContext();
+            InitializeComponent();
 
             BoxUserName.Text = user.FullName;
             currentUser = user;
-            DrawProductItem();
+            
+            DrawProductItem(products);
+            DrawSuppliers();
 
             if (user.RoleNavigation.Role1 == "Администратор")
             {
@@ -40,25 +51,35 @@ namespace demo.Windows
                 PanelBottomAdmin.Visibility = Visibility.Collapsed;
             }
         }
-        private void DrawProductItem()
+
+        public void DrawSuppliers()
         {
-            BoxProduct.Items.Clear();
-
-            var prod = context.Products
-                .Include(p => p.Name)
-                .Include(p => p.Category)
-                .Include(p => p.Manufacturer)
-                .Include(p => p.OrderArticles)
-                .Include(p => p.Supplier)
-                .ToList();
-
-            foreach (var item in prod)
+            List<Supplier> suppliers = new List<Supplier>()
             {
-                if (item != null)
+                new Supplier()
                 {
-                    ItemProduct xml = new ItemProduct(item);
+                    Id = -1,
+                    Name = "все поставщики",
+                }
+            };
+            suppliers.AddRange(context.Suppliers.ToList());
+            ComboBoxItem.ItemsSource = suppliers;
+        }
 
-                    BoxProduct.Items.Add(xml);
+        private void DrawProductItem(List<Product> product)
+        {
+            if(BoxProduct != null)
+            {
+                BoxProduct.Items.Clear();
+                //BoxProduct.ItemsSource = product.Select(p => new ItemProduct(p));
+                foreach (var item in products)
+                {
+                    if (item != null)
+                    {
+                        ItemProduct xml = new ItemProduct(item);
+
+                        BoxProduct.Items.Add(xml);
+                    }
                 }
             }
         }
@@ -72,11 +93,14 @@ namespace demo.Windows
 
         private void BoxProduct_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            EditProduct edit = new EditProduct();
+            ListBox list = sender as ListBox;
+            ItemProduct controller = list.SelectedItem as ItemProduct;
+            Product product = controller.DataContext as Product;
+            EditProduct edit = new EditProduct(product);
 
             if (edit.ShowDialog() == true)
             {
-
+                DrawProductItem(products);
             }
         }
 
@@ -85,7 +109,7 @@ namespace demo.Windows
             AddProduct add = new AddProduct();
             if (add.ShowDialog() == true)
             {
-
+                DrawProductItem(products);
             }
         }
 
@@ -98,18 +122,89 @@ namespace demo.Windows
             }
         }
 
+        //Поиск
+        private void BoxFind_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Sort();
+        }
+        //Сортировка
+        private void RadioUpp_Checked(object sender, RoutedEventArgs e)
+        {
+            RadioButton radio = sender as RadioButton;
+
+            if (radio.Content.ToString() == "по возрастанию")
+            {
+                SortParam = "по возрастанию";
+            }
+            else if (radio.Content.ToString() == "по убыванию")
+            {
+                SortParam = "по убыванию";
+            }
+            Sort();
+        }
+        //Фильтрация
+        private void ComboSuppliers_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox box = sender as ComboBox;
+            if (box.SelectedItem != null)
+            {
+                FiltParam = box.SelectedItem.ToString();
+            }
+            Sort();
+        }
+
+        public void Sort()
+        {
+            products = context.Products.Include(q => q.Supplier)
+                .Include(q => q.Manufacturer)
+                .Include(q => q.Name)
+                .Include(q => q.Category)
+                .ToList();
+
+            products = products.Where(q =>
+                (q.Description?.Contains(BoxFind.Text) ?? false)
+                || (q.Article?.Contains(BoxFind.Text) ?? false)
+                || (q.Name?.Name?.Contains(BoxFind.Text) ?? false)
+                ).Where(q => q.Supplier.Name == FiltParam
+                || FiltParam == "все поставщики").ToList();
+
+            if (SortParam == "по возрастанию")
+            {
+                products = products.OrderBy(q => q.Count).ToList();
+            }
+            else if (SortParam == "по убыванию")
+            {
+                products = products.OrderByDescending(q => q.Count).ToList();
+            }
+
+            DrawProductItem(products);
+        }
+
         private void Buutton_delite_product(object sender, RoutedEventArgs e)
         {
+            Product prod = (Product)(BoxProduct.SelectedItem as ItemProduct).DataContext;
+            if (prod != null)
+            {
+                var order = context.OrderArticles.FirstOrDefault(q => q.ProductId == prod.Id);
 
-        }
-
-        private void Selection_filter(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-
-        }
-        private void Checker_sort_product(object sender, RoutedEventArgs e)
-        {
-
+                if (order != null)
+                {
+                    MessageBox.Show("Продукт не можен быть удален, он участвует в заказе");
+                    return;
+                }
+                context.Products.Remove(prod);
+                context.SaveChanges();
+                products = context.Products.ToList();
+                DrawProductItem(products);
+                if (prod.ImagePath != null)
+                {
+                    File.Delete(Path.Combine(projPath,"Images", prod.ImagePath));
+                }
+            }
+            else
+            {
+                MessageBox.Show("Выберете продукт для удаления");
+            }
         }
     }
 }

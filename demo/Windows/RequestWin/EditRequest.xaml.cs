@@ -12,10 +12,8 @@ namespace demo.Windows.RequestWin
             InitializeComponent();
             context = new DemoContext();
             PanelOrder.DataContext = order;
-            List<Status> orders = context.Statuses.ToList();
-            BoxStatus.ItemsSource = orders;
-            int a = orders.IndexOf(order.Status);
-            BoxStatus.SelectedIndex = orders.IndexOf(order.Status);
+            BoxStatus.ItemsSource = context.Statuses.ToList();
+            BoxStatus.SelectedItem = order.Status;
             
         }
 
@@ -38,6 +36,7 @@ namespace demo.Windows.RequestWin
                     };
                     context.Orders.Add(order);
                     context.SaveChanges();
+                    DialogResult = true;
                 }
                 catch (Exception ex)
                 {
