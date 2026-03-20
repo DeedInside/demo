@@ -42,7 +42,7 @@ namespace demo.Windows.RequestWin
 
                 if (edit.ShowDialog() == true)
                 {
-
+                    BoxOrder.ItemsSource = Context.Orders.ToList();
                 }
             }
         }
@@ -52,7 +52,7 @@ namespace demo.Windows.RequestWin
             AddRequest add = new AddRequest();
             if(add.ShowDialog() == true)
             {
-
+                BoxOrder.ItemsSource = Context.Orders.ToList();
             }
         }
 
