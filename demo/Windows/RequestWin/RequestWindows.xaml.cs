@@ -63,10 +63,10 @@ namespace demo.Windows.RequestWin
             {
                 var order = Context.OrderArticles.FirstOrDefault(q => q.ProductId == prod.Id) ?? null;
 
-                var ordersArticles = Context.OrderArticles.FirstOrDefault(q=> q.Order == prod);
+                var ordersArticles = Context.OrderArticles.Where(q=> q.Order == prod);
                 if (ordersArticles != null)
                 {
-                    Context.OrderArticles.Remove(ordersArticles);
+                    Context.OrderArticles.RemoveRange(ordersArticles);
                 }
                 Context.Orders.Remove(prod);
                 Context.SaveChanges();

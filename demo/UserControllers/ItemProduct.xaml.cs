@@ -25,7 +25,7 @@ namespace demo.UserControllers
                 BitmapImage bitmap = new(uri);
                 BoxImage.Source = bitmap;
             }
-            catch (FileNotFoundException ex) //изображение не найдено
+            catch (Exception ex)//любая ошибка с изобращением
             {
                 Console.WriteLine(ex.Message);
                 BitmapImage bitmap = new(new Uri(Path.Combine(projPath, "Images", "Defaults", "picture.png")));

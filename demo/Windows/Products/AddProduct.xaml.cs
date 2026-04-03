@@ -44,6 +44,7 @@ namespace demo.Windows.Products
                 if (name == null)
                 {
                     context.ProductNames.Add(new ProductName() { Id = context.ProductNames.Max(q => q.Id) + 1, Name = BoxName.Text });
+                    context.SaveChanges();
                     name = context.ProductNames.FirstOrDefault(q => q.Name == BoxName.Text);
                 }
                 //тут идёт присвоение id как как в таблице я забыл установить автоикремент для поля ID,
