@@ -6,7 +6,6 @@ using demo.Windows.RequestWin;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
 using System.Reflection;
-using System.Transactions;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -20,8 +19,8 @@ namespace demo.Windows
         private readonly string projPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
         private string SortParam = "по возрастанию";
-        private string FiltParam = "все поставщики";
-
+        private List<string> FiltParams = new() {"все диапазоны", "0 10,99", "11,00 14,99", "15,00 100"};
+        private string FiltParam = "все диапазоны";
         public Main()
         {
             context = new DemoContext();
@@ -40,7 +39,7 @@ namespace demo.Windows
             currentUser = user;
             
             DrawProductItem(products);
-            DrawSuppliers();
+            ComboBoxItem.ItemsSource = FiltParams;
 
             if (user.RoleNavigation.Role1 == "Администратор")
             {
@@ -52,35 +51,12 @@ namespace demo.Windows
             }
         }
 
-        public void DrawSuppliers()
-        {
-            List<Supplier> suppliers = new List<Supplier>()
-            {
-                new Supplier()
-                {
-                    Id = -1,
-                    Name = "все поставщики",
-                }
-            };
-            suppliers.AddRange(context.Suppliers.ToList());
-            ComboBoxItem.ItemsSource = suppliers;
-        }
-
         private void DrawProductItem(List<Product> product)
         {
             if(BoxProduct != null)
             {
-                BoxProduct.Items.Clear();
-                //BoxProduct.ItemsSource = product.Select(p => new ItemProduct(p));
-                foreach (var item in products)
-                {
-                    if (item != null)
-                    {
-                        ItemProduct xml = new ItemProduct(item);
-
-                        BoxProduct.Items.Add(xml);
-                    }
-                }
+                BoxProduct.ItemsSource = null;
+                BoxProduct.ItemsSource = product.Select(p => new ItemProduct(p));
             }
         }
 
@@ -88,7 +64,7 @@ namespace demo.Windows
         {
             Authorization authorization = new Authorization();
             authorization.Show();
-            this.Close();
+            Close();
         }
 
         private void BoxProduct_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -116,10 +92,6 @@ namespace demo.Windows
         private void Button_request(object sender, RoutedEventArgs e)
         {
             RequestWindows request = new RequestWindows(currentUser);
-            if (request.ShowDialog() == true)
-            {
-
-            }
         }
 
         //Поиск
@@ -148,6 +120,8 @@ namespace demo.Windows
             ComboBox box = sender as ComboBox;
             if (box.SelectedItem != null)
             {
+                List<string> conv = box.SelectedItem.ToString().Split().ToList();
+                
                 FiltParam = box.SelectedItem.ToString();
             }
             Sort();
@@ -160,22 +134,33 @@ namespace demo.Windows
                 .Include(q => q.Name)
                 .Include(q => q.Category)
                 .ToList();
-
-            products = products.Where(q =>
+            //фильтрация
+            try
+            {
+                products = products.Where(q =>
                 (q.Description?.Contains(BoxFind.Text) ?? false)
                 || (q.Article?.Contains(BoxFind.Text) ?? false)
                 || (q.Name?.Name?.Contains(BoxFind.Text) ?? false)
-                ).Where(q => q.Supplier.Name == FiltParam
-                || FiltParam == "все поставщики").ToList();
-
+                ).Where(q => q.Discount >= Convert.ToDouble(FiltParam.Split().ToList()[0]) && q.Discount <= Convert.ToDouble(FiltParam.Split().ToList()[1])).ToList();
+            }
+            catch
+            {
+                products = products.Where(q =>
+                (q.Description?.Contains(BoxFind.Text) ?? false)
+                || (q.Article?.Contains(BoxFind.Text) ?? false)
+                || (q.Name?.Name?.Contains(BoxFind.Text) ?? false)
+                ).Where(q =>FiltParam == "все диапазоны").ToList();
+            }
+            //сортировка по цене
             if (SortParam == "по возрастанию")
             {
-                products = products.OrderBy(q => q.Count).ToList();
+                products = products.OrderBy(q => (q.Price / 100) * ( 100 - q.Discount)).ToList();
             }
             else if (SortParam == "по убыванию")
             {
-                products = products.OrderByDescending(q => q.Count).ToList();
+                products = products.OrderByDescending(q => (q.Price / 100) * (100 - q.Discount)).ToList();
             }
+            //сортировка по количеству на складе 
 
             DrawProductItem(products);
         }
